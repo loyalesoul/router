@@ -254,10 +254,15 @@ export function MatchRoute<
   return params ? props.children : null
 }
 
+export type MakeRouteMatches<
+  TRouteTree extends AnyRoute,
+  TRouteId extends RouteIds<TRouteTree>,
+> = TRouteId extends any ? MakeRouteMatch<TRouteTree, TRouteId> : never
+
 export function useMatches<
   TRouteTree extends AnyRoute = RegisteredRouter['routeTree'],
   TRouteId extends RouteIds<TRouteTree> = ParseRoute<TRouteTree>['id'],
-  TRouteMatch = MakeRouteMatch<TRouteTree, TRouteId>,
+  TRouteMatch = MakeRouteMatches<TRouteTree, TRouteId>,
   T = Array<TRouteMatch>,
 >(opts?: { select?: (matches: Array<TRouteMatch>) => T }): T {
   return useRouterState({

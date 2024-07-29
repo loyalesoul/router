@@ -26,13 +26,13 @@ import {
 import { isRedirect, isResolvedRedirect } from './redirects'
 import { isNotFound } from './not-found'
 import type * as React from 'react'
-import type { Manifest } from './manifest'
 import type {
   HistoryLocation,
   HistoryState,
   RouterHistory,
 } from '@tanstack/history'
-
+import type { NoInfer } from '@tanstack/react-store'
+import type { Manifest } from './manifest'
 import type {
   AnyContext,
   AnyRoute,
@@ -70,13 +70,9 @@ import type {
   CommitLocationOptions,
   NavigateFn,
 } from './RouterProvider'
-
 import type { AnyRedirect, ResolvedRedirect } from './redirects'
-
 import type { NotFoundError } from './not-found'
 import type { NavigateOptions, ResolveRelativePath, ToOptions } from './link'
-import type { NoInfer } from '@tanstack/react-store'
-import type { DeferredPromiseState } from './defer'
 
 //
 
@@ -323,12 +319,14 @@ export interface RouterOptions<
   /**
    * A component that will be used to wrap the entire router.
    * This is useful for providing a context to the entire router.
+   * Only non-DOM-rendering components like providers should be used, anything else will cause a hydration error.
    * @link [API Docs](https://tanstack.com/router/latest/docs/framework/react/api/router/RouterOptionsType#wrap-property)
    */
   Wrap?: (props: { children: any }) => React.JSX.Element
   /**
    * A component that will be used to wrap the inner contents of the router.
    * This is useful for providing a context to the inner contents of the router where you also need access to the router context and hooks.
+   * Only non-DOM-rendering components like providers should be used, anything else will cause a hydration error.
    * @link [API Docs](https://tanstack.com/router/latest/docs/framework/react/api/router/RouterOptionsType#innerwrap-property)
    */
   InnerWrap?: (props: { children: any }) => React.JSX.Element
@@ -637,7 +635,7 @@ export class Router<
     }
 
     if (
-      // eslint-disable-next-line ts/no-unnecessary-condition
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       !this.history ||
       (this.options.history && this.options.history !== this.history)
     ) {
@@ -656,7 +654,7 @@ export class Router<
       this.buildRouteTree()
     }
 
-    // eslint-disable-next-line ts/no-unnecessary-condition
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!this.__store) {
       this.__store = new Store(getInitialRouterState(this.latestLocation), {
         onUpdate: () => {
@@ -1544,9 +1542,9 @@ export class Router<
           await this.loadMatches({
             matches: pendingMatches,
             location: next,
-            // eslint-disable-next-line ts/require-await
+            // eslint-disable-next-line @typescript-eslint/require-await
             onReady: async () => {
-              // eslint-disable-next-line ts/require-await
+              // eslint-disable-next-line @typescript-eslint/require-await
               this.startViewTransition(async () => {
                 // this.viewTransitionPromise = createControlledPromise<true>()
 
